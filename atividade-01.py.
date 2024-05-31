@@ -1,0 +1,46 @@
+
+import tensorflow as tf
+from tensorflow import keras
+
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Carregar o conjunto de dados Fashion MNIST
+fashion_mnist = keras.datasets.fashion_mnist
+(train_images, train_labels), (test_images, test_labels) = fashion_mnist.load_data()
+
+# Normalizar os valores dos pixels para o intervalo 0 a 1
+train_images = train_images / 255.0
+test_images = test_images / 255.0
+
+# Construir a rede neural
+model = keras.Sequential([
+    keras.layers.Flatten(input_shape=(28, 28)),  # Camada de entrada (flatten)
+    keras.layers.Dense(128, activation='relu'),  # Camada oculta densa com 128 neurônios
+    keras.layers.Dense(10, activation='softmax') # Camada de saída com 10 neurônios (uma para cada classe)
+])
+
+# Compilar o modelo
+model.compile(optimizer='adam',
+              loss='sparse_categorical_crossentropy',
+              metrics=['accuracy'])
+
+# Treinar o modelo
+model.fit(train_images, train_labels, epochs=10)
+
+# Avaliar o modelo usando os dados de teste
+test_loss, test_acc = model.evaluate(test_images, test_labels, verbose=2)
+print('\nTest accuracy:', test_acc)
+
+# Fazer previsões sobre as imagens de teste
+predictions = model.predict(test_images)
+
+# Visualizar uma previsão
+plt.figure()
+plt.imshow(test_images[0])
+plt.colorbar()
+plt.grid(False)
+plt.show()
+
+print("Prediction:", np.argmax(predictions[0]))
+print("True label:", test_labels[0]);
